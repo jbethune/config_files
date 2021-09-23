@@ -84,7 +84,6 @@ nvim_lsp.rust_analyzer.setup({on_attach=custom_lsp_attach})
 -- Taken from https://www.reddit.com/r/neovim/comments/iil3jt/nvimlsp_how_to_display_all_diagnostics_for_entire/
 function setup_fill_quickfix()
     local method = "textDocument/publishDiagnostics"
-    --local default_callback = vim.lsp.callbacks[method]
     local default_callback = vim.lsp.handlers[method]
     vim.lsp.handlers[method] = function(err, method, result, client_id)
         default_callback(err, method, result, client_id)
@@ -96,7 +95,6 @@ function setup_fill_quickfix()
                               lnum = v.range.start.line + 1,
                               col = v.range.start.character + 1,
                               text = v.message; }
-                --local fname = result.uri
                 table.insert(item_list, tab)
             end
             local old_items = vim.fn.getqflist()
