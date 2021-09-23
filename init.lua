@@ -1,5 +1,6 @@
 
--- use Lua idioms to define key mappings
+-- use Lua idioms to define the config
+-- (instead of calling the Vim API immediately)
 
 local opts = {
     number=true,
