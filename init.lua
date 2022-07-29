@@ -82,16 +82,17 @@ end
 
 nvim_lsp.rust_analyzer.setup({on_attach=custom_lsp_attach})
 
--- Taken from https://www.reddit.com/r/neovim/comments/iil3jt/nvimlsp_how_to_display_all_diagnostics_for_entire/
+-- Taken and adapted from https://www.reddit.com/r/neovim/comments/iil3jt/nvimlsp_how_to_display_all_diagnostics_for_entire/
 function setup_fill_quickfix()
     local method = "textDocument/publishDiagnostics"
+    --local default_callback = vim.lsp.callbacks[method]
     local default_callback = vim.lsp.handlers[method]
     vim.lsp.handlers[method] = function(err, method, result, client_id)
         default_callback(err, method, result, client_id)
-        if result and result.diagnostics then
+        if method and method.diagnostics then
             local item_list = {}
-            for _, v in ipairs(result.diagnostics) do
-                local fname = result.uri
+            for _, v in ipairs(method.diagnostics) do
+                local fname = method.uri
                 local tab = { filename = fname,
                               lnum = v.range.start.line + 1,
                               col = v.range.start.character + 1,
@@ -100,8 +101,8 @@ function setup_fill_quickfix()
             end
             local old_items = vim.fn.getqflist()
             for _, old_item in ipairs(old_items) do
-                local bufnr = vim.uri_to_bufnr(result.uri)
-                if vim.uri_from_bufnr(old_item.bufnr) ~= result.uri then
+                local bufnr = vim.uri_to_bufnr(method.uri)
+                if vim.uri_from_bufnr(old_item.bufnr) ~= method.uri then
                     table.insert(item_list, old_item)
                 end
             end
